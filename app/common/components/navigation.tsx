@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { Separator } from "./ui/separator";
+import { Separator } from "~/common/components/ui/separator";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -7,7 +7,9 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
 } from "./ui/navigation-menu";
+import { cn } from "~/lib/utils";
 
 const menus = [
   {
@@ -16,12 +18,12 @@ const menus = [
     items: [
       {
         name: "Leaderboards",
-        description: "See the top performers in your organization",
+        description: "See the top performers in your community",
         to: "/products/leaderboards",
       },
       {
         name: "Categories",
-        description: "See the categories of your products",
+        description: "See the top categories in your community",
         to: "/products/categories",
       },
       {
@@ -31,12 +33,12 @@ const menus = [
       },
       {
         name: "Submit a Product",
-        description: "Submit a product to the community",
+        description: "Submit a product to our community",
         to: "/products/submit",
       },
       {
         name: "Promote",
-        description: "Promote a product to the community",
+        description: "Promote a product to our community",
         to: "/products/promote",
       },
     ],
@@ -47,27 +49,27 @@ const menus = [
     items: [
       {
         name: "Remote Jobs",
-        description: "Find a remote job",
+        description: "Find a remote job in our community",
         to: "/jobs?location=remote",
       },
       {
         name: "Full-Time Jobs",
-        description: "Find a full-time job",
+        description: "Find a full-time job in our community",
         to: "/jobs?type=full-time",
       },
       {
         name: "Freelance Jobs",
-        description: "Find a freelance job",
+        description: "Find a freelance job in our community",
         to: "/jobs?type=freelance",
       },
       {
         name: "Internships",
-        description: "Find an internship",
+        description: "Find an internship in our community",
         to: "/jobs?type=internship",
       },
       {
         name: "Submit a Job",
-        description: "Submit a job to the community",
+        description: "Submit a job to our community",
         to: "/jobs/submit",
       },
     ],
@@ -78,22 +80,22 @@ const menus = [
     items: [
       {
         name: "All Posts",
-        description: "See all posts in the community",
+        description: "See all posts in our community",
         to: "/community",
       },
       {
         name: "Top Posts",
-        description: "See the top posts in the community",
+        description: "See the top posts in our community",
         to: "/community?sort=top",
       },
       {
         name: "New Posts",
-        description: "See the new posts in the community",
+        description: "See the new posts in our community",
         to: "/community?sort=new",
       },
       {
         name: "Create a Post",
-        description: "Create a post to the community",
+        description: "Create a post in our community",
         to: "/community/create",
       },
     ],
@@ -108,12 +110,12 @@ const menus = [
     items: [
       {
         name: "All Teams",
-        description: "See all teams in the community",
+        description: "See all teams in our community",
         to: "/teams",
       },
       {
         name: "Create a Team",
-        description: "Create a team to the community",
+        description: "Create a team in our community",
         to: "/teams/create",
       },
     ],
@@ -122,39 +124,59 @@ const menus = [
 
 export default function Navigation() {
   return (
-    <nav className="flex px-20 h-16 items-center justify-between backdrop-blur fixed top-0 left-0 right-0 z-50 bg-background/50 border-b border-border">
+    <nav className="flex px-20 h-16 items-center justify-between backdrop-blur fixed top-0 left-0 right-0 z-50 bg-background/50">
       <div className="flex items-center">
-        <Link to="/" className="font-bold tracking-tighter text-xl">
-          WeMake
+        <Link to="/" className="font-bold tracking-tighter text-lg">
+          wemake
         </Link>
-        <Separator orientation="vertical" className=" mx-4" />
+        <Separator orientation="vertical" className="h-6 mx-4" />
         <NavigationMenu>
           <NavigationMenuList>
-            {menus.map((menu) => {
-              const value = menu.name.toLowerCase().replace(/\s+/g, "-");
-              return (
-                <NavigationMenuItem key={menu.name} value={value}>
-                  {menu.items ? (
-                    <>
+            {menus.map((menu) => (
+              <NavigationMenuItem key={menu.name}>
+                {menu.items ? (
+                  <>
+                    <Link to={menu.to}>
                       <NavigationMenuTrigger>{menu.name}</NavigationMenuTrigger>
-                      <NavigationMenuContent>
-                        {menu.items.map((item) => (
-                          <NavigationMenuItem key={item.name}>
-                            <NavigationMenuLink>
-                              <Link to={item.to}>{item.name}</Link>
+                    </Link>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[600px] font-light gap-3 p-4 grid-cols-2">
+                        {menu.items?.map((item) => (
+                          <NavigationMenuItem
+                            key={item.name}
+                            className={cn([
+                              "select-none rounded-md transition-colors focus:bg-accent  hover:bg-accent",
+                              item.to === "/products/promote" &&
+                                "col-span-2 bg-primary/10 hover:bg-primary/20 focus:bg-primary/20",
+                              item.to === "/jobs/submit" &&
+                                "col-span-2 bg-primary/10 hover:bg-primary/20 focus:bg-primary/20",
+                            ])}
+                          >
+                            <NavigationMenuLink asChild>
+                              <Link
+                                className="p-3 space-y-1 block leading-none no-underline outline-none flex flex-col items-start"
+                                to={item.to}
+                              >
+                                <span className="text-sm font-medium leading-none">
+                                  {item.name}
+                                </span>
+                                <span className="text-sm leading-snug text-muted-foreground">
+                                  {item.description}
+                                </span>
+                              </Link>
                             </NavigationMenuLink>
                           </NavigationMenuItem>
                         ))}
-                      </NavigationMenuContent>
-                    </>
-                  ) : (
-                    <NavigationMenuLink>
-                      <Link to={menu.to}>{menu.name}</Link>
-                    </NavigationMenuLink>
-                  )}
-                </NavigationMenuItem>
-              );
-            })}
+                      </ul>
+                    </NavigationMenuContent>
+                  </>
+                ) : (
+                  <Link className={navigationMenuTriggerStyle()} to={menu.to}>
+                    {menu.name}
+                  </Link>
+                )}
+              </NavigationMenuItem>
+            ))}
           </NavigationMenuList>
         </NavigationMenu>
       </div>
