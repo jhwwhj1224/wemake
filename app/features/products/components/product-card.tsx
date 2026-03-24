@@ -28,7 +28,7 @@ export function ProductCard({
   votesCount,
 }: ProductCardProps) {
   return (
-    <Link to={`/products/${id}`}>
+    <Link to={`/products/${id}`} className="block">
       <Card className="w-full bg-transparent p-4 hover:bg-primary/10">
         <CardHeader>
           <CardTitle className="text-2xl font-semibold leading-none tracking-tight">
