@@ -14,10 +14,20 @@ const paramsSchema = z.object({
   day: z.coerce.number(),
 });
 
-export function meta({}: Route.MetaArgs) {
-  return [{ title: "Daily Leaderboard | WeMake" }];
-}
-
+export const meta: Route.MetaFunction = ({ params }) => {
+  const date = DateTime.fromObject({
+    year: Number(params.year),
+    month: Number(params.month),
+    day: Number(params.day),
+  })
+    .setZone("America/Los_Angeles")
+    .setLocale("en-US");
+  return [
+    {
+      title: `The best products of ${date.toLocaleString(DateTime.DATE_MED)} | WeMake`,
+    },
+  ];
+};
 export function loader({ params }: Route.LoaderArgs) {
   const { success, data: parsedParams } = paramsSchema.safeParse(params);
   if (!success) {
